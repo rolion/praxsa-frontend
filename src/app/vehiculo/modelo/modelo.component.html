@@ -1,0 +1,228 @@
+<section class="main-content">
+    <ul class="breadcrumb breadcrumb-style ">
+      <li class="breadcrumb-item">
+        <h5 class="page-title m-b-0">Dashboard</h5>
+      </li>
+      <li class="breadcrumb-item bcrumb-1">
+        <a routerLink="/dashboard/main">
+          <i class="fas fa-home font-17"></i></a>
+      </li>
+      <li class="breadcrumb-item">Dashboard</li>
+    </ul>
+    <div class="section-body">
+      <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="p-10">
+                    <div class="row">
+                        <div class="col-lg-6">
+                          <div class="row m-0">
+                            <div class="col-auto p-0">
+                                <div class="ngxTableHeader">
+                                    <div class="table-title">
+                                        <h2><strong>Items Vehiculos</strong></h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 p-0">
+                              <div class="ngxTableHeader">
+                                <div class="table-search-area">
+                                    <div>
+                                        <label for="search-input"><i class="material-icons search-icon">search</i></label>
+                                        <input placeholder="Search" name="search-input" type="text" class="browser-default search-field"
+                                        (keyup)='updateFilter($event)' aria-label="Search box">
+                                    </div>
+                                </div>
+                                <div class="header-buttons-left">
+                                    <div class="tbl-btn-style">
+                                        <button class="btn btn-icon icon-left btn-primary rounded-button" (click)='addRow(addRecord)'>
+                                            <i class="material-icons">add</i>
+                                        </button>
+                                        <button [hidden]=true class="btn btn-icon icon-left btn-danger rounded-button">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                                        
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                          <ngx-datatable #table 
+                            class="material" 
+                            [rows]="rows" 
+                            [loadingIndicator]="loadingIndicator"
+                            columnMode="force" 
+                            [headerHeight]="50" 
+                            [footerHeight]="50" 
+                            rowHeight="auto" 
+                            [limit]="10"
+                            [scrollbarH]="scrollBarHorizontal" 
+                            [reorderable]="reorderable"
+                            
+                            [externalPaging]="true"
+                            [count]="count"
+                            [offset]="offset"
+                            [limit]="10"
+                            (page)="onFooterPage($event)"
+                            >
+                            <ngx-datatable-column [width]="200" name="Nombre">
+                                <ng-template let-row="row" let-value="value" let-i="index" ngx-datatable-cell-template>
+                                    <div class="name-col-style">
+                                    <div>{{row.name}}</div>
+                                    </div>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column [width]="200" name="Marca">
+                                <ng-template let-row="row" let-value="value" let-i="index" ngx-datatable-cell-template>
+                                    <div class="name-col-style">
+                                    <div>{{row.car_brand_name}}</div>
+                                    </div>
+                                </ng-template>
+                            </ngx-datatable-column>
+                        
+                            <ngx-datatable-column name="Estado">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    @if (row.is_enable===true) {
+                                    <div class="badge-outline col-green">Habilitado
+                                    </div>
+                                    }
+                                    @if (row.is_enable===false) {
+                                    <div class="badge-outline col-red">No Habilitado
+                                    </div>
+                                    }
+                                    <!-- @if (row.is_enable==='Pending') {
+                                    <div class="badge-outline col-indigo">{{row.is_enable}}
+                                    </div>
+                                    } -->
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Acciones" [sortable]="false">
+                                <ng-template let-value="value" let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+                                    <a class="msr-2 h-auto tblEditBtn" (click)='editRow(row, rowIndex, editRecord)'>
+                                    <i class="fas fa-pen"></i>
+                                    </a>
+                                    <a class="h-auto tblDelBtn">
+                                    <i class="far fa-trash-alt"></i>
+                                    </a>
+                                </ng-template>
+                            </ngx-datatable-column>
+                        </ngx-datatable>
+                        </div>
+                        <ng-template #addRecord let-modal>
+                            <div class="modal-header editRowModal">
+                                <h4 class="modal-title" id="modal-basic-title">
+                                    <div class="table-modal-header">
+                                            <div class="modal-about">
+                                                <div class="fw-bold p-t-10 font-17">
+                                                Agregar Modelo
+                                                </div>
+                                            </div>
+                                    </div>
+                                </h4>
+                                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                                <span aria-hidden="true"><i class="material-icons">close</i></span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form class="register-form" [formGroup]="modelo" (ngSubmit)="onAddRowSave(modelo)">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group position-relative">
+                                                <label>Nombre <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control pl-5" formControlName="name" placeholder="Nombre">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group position-relative">
+                                                <label >Marca<span class="text-danger">*</span></label>
+                                                <ng-select [items]="brands | async" 
+                                                bindLabel="name" 
+                                                autofocus 
+                                                bindValue="id"
+                                                formControlName="car_brand"
+                                                ></ng-select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group position-relative">
+                                                <label class="d-block">esta hablitado?</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" formControlName="is_enable" id="defaultCheck1">
+                                                    <label class="form-check-label" for="defaultCheck1">
+                                                        si
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <button class="btn btn-icon icon-left btn-primary" onclick="addItem()"><i class="fas fa-plus"></i>Agregar Item</button>
+                                            <div class="card">
+                                                <div *ngFor="let item of items.controls; let i=index"  [formGroupName]="i">
+                                                    <!-- The repeated item template -->
+                                                    <label for="item-{{ i }}">item:</label>
+                                                    <!-- <input id="item-{{ i }}" type="text" [formControlName]="items.controls[i].car_part"> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" [disabled]="!modelo.valid">Guardas</button>
+                                        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cerrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </ng-template>
+  
+                        <ng-template #editRecord let-modal>
+                            <div class="modal-header editRowModal">
+                                <h4 class="modal-title" id="modal-basic-title">
+                                    <div class="table-modal-header">
+                                            <div class="modal-about">
+                                                <div class="fw-bold p-t-10 font-17">
+                                                Editar Marca
+                                                </div>
+                                            </div>
+                                    </div>
+                                </h4>
+                                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                                    <span aria-hidden="true"><i class="material-icons">close</i></span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form class="register-form" [formGroup]="modelo" (ngSubmit)="onEditRowSave(modelo)">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group position-relative">
+                                                <label>Nombre <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control pl-5" formControlName="name" placeholder="Nombre">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group position-relative">
+                                                <label class="d-block">esta hablitado?</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" formControlName="is_enable" id="defaultCheck1">
+                                                    <label class="form-check-label" for="defaultCheck1">
+                                                        si
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" [disabled]="!modelo.valid">Guardar</button>
+                                        <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cerrar</button>
+                                        </div>
+                                </form>
+                            </div>
+                        </ng-template> 
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+  </section>
